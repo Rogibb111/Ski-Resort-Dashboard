@@ -2,3 +2,6 @@
 *.log
 .vscode
 .metals
+.bloop
+target
+metals.sbt
