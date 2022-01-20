@@ -3,6 +3,11 @@ package controllers
 import javax.inject._
 import play.api._
 import play.api.mvc._
+import play.api.libs.ws._
+import net.ruippeixotog.scalascraper.browser.JsoupBrowser
+import net.ruippeixotog.scalascraper.dsl.DSL._
+import net.ruippeixotog.scalascraper.dsl.DSL.Extract._
+import net.ruippeixotog.scalascraper.dsl.DSL.Parse._
 
 /**
  * This controller creates an `Action` to handle HTTP requests to the
@@ -19,6 +24,10 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents) e
    * a path of `/`.
    */
   def index() = Action { implicit request: Request[AnyContent] =>
+    val browser = JsoupBrowser()
+    val doc = browser.get("http://www.arapahoebasin.com");
+    val items = doc >> elementList(".ab-condition");
+    Console.println(items.map(_ >> allText("div")))
     Ok(views.html.index())
   }
 }
