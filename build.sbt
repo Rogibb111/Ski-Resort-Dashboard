@@ -14,6 +14,7 @@ libraryDependencies += "net.ruippeixotog" %% "scala-scraper" % "2.2.1"
 libraryDependencies += jdbc
 libraryDependencies += "org.postgresql" % "postgresql" % "42.3.1"
 libraryDependencies += "com.typesafe.play" %% "play-slick" % "5.0.0"
+
 // Adds additional packages into Twirl
 //TwirlKeys.templateImports += "com.example.controllers._"
 
