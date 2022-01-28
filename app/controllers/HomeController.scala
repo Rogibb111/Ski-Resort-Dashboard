@@ -45,7 +45,7 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents, v
     
     val databaseSnapshots: Map[Resorts, DatabaseSnapshot] = Map(ArapahoeBasin -> new DatabaseSnapshot(dailySnowVal, baseVal))
     dao.setSnapshotForResort(databaseSnapshots)
-    
+
     Ok(views.html.index())
   }
 }
