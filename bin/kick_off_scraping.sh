@@ -1,7 +1,8 @@
 #!/usr/bin/env scala.bat
 
 import java.net.{URL, HttpURLConnection}
-val connection = (new URL("http://www.google.com")).openConnection.asInstanceOf[HttpURLConnection]
+val url = sys.env.getOrElse("SCRAPE_URL", "http://localhost:9000/scrape")
+val connection = (new URL(url)).openConnection.asInstanceOf[HttpURLConnection]
 connection.setConnectTimeout(5000)
 connection.setReadTimeout(5000)
 connection.setRequestMethod("GET")
