@@ -19,8 +19,7 @@ import models._
 class ScraperController @Inject()(val controllerComponents: ControllerComponents, val dao: ResortData) extends BaseController {
     def index() = Action { implicit request: Request[AnyContent] =>
         val browser = JsoupBrowser()
-        val doc = browser.get("http://www.arapahoebasin.com");
-        val conditionsLabels = doc >> elementList(".ab-condition_sub")
+        val conditionsLabels = browser.get("http://www.arapahoebasin.com") >> elementList(".ab-condition_sub")
         // Get the value for 24 Hour Snowfall
         val dailySnowLabel = conditionsLabels.filter(el => el.text == "Past 24 Hrs")(0)
         val dailySnowString = dailySnowLabel.siblings.find(el => el.attr("class") == "ab-condition_value").get.text
@@ -30,8 +29,17 @@ class ScraperController @Inject()(val controllerComponents: ControllerComponents
         val baseString = baseLabel.siblings.find(el => el.attr("class") == "ab-condition_value").get.text
         val baseVal = baseString.substring(0, baseString.length()-1).toIntOption.getOrElse(0)
 
+
+        val liveWeather = browser.get("https://www.snow-forecast.com/resorts/Arapahoe-Basin/") >> elementList(".live-snow__table tbody .live-snow__table-row")
+        val tcellMidLift = liveWeather.find(el => (el >> element(".live-snow__table-row .live-snow__table-cell--elevation")).text == "Middle Lift:").get
+        val temperature = (tcellMidLift >> element(".temp")).text.toInt
+        val windSpd = (tcellMidLift >> element(".wind-icon__val")).text.toInt
+
         
-        val databaseSnapshots: Map[Resorts, DatabaseSnapshot] = Map(ArapahoeBasin -> new DatabaseSnapshot(dailySnowVal, baseVal))
+
+
+        
+        val databaseSnapshots: Map[Resorts, DatabaseSnapshot] = Map(ArapahoeBasin -> new DatabaseSnapshot(dailySnowVal, baseVal, temperature, windSpd, North))
         dao.setSnapshotForResort(databaseSnapshots)
 
         Ok("Scraping Finished")

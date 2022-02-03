@@ -1,4 +1,4 @@
-#!/usr/bin/env scala
+#!/usr/bin/env scala.bat
 
 import java.net.{URL, HttpURLConnection}
 val url = sys.env.getOrElse("SCRAPE_URL", "http://localhost:9000/scrape")
