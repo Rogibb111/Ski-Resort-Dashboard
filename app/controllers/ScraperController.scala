@@ -37,13 +37,9 @@ class ScraperController @Inject()(val controllerComponents: ControllerComponents
         val transform = (tcellMidLift >> element(".wind-icon__arrow")).attr("transform")
         val degreeExtractor = "[a-z]+\\((\\d+)\\)".r
         val degreeExtractor(degreeStr) = transform
-        val cardinalDir = CardinalDirectionsMapper.fromDegree(degreeStr.toInt)
-
+        val cardinalDir = CardinalDirectionsMapper.fromDegree(degreeStr.toInt).get
         
-
-
-        
-        val databaseSnapshots: Map[Resorts, DatabaseSnapshot] = Map(ArapahoeBasin -> new DatabaseSnapshot(dailySnowVal, baseVal, temperature, windSpd, North))
+        val databaseSnapshots: Map[Resorts, DatabaseSnapshot] = Map(ArapahoeBasin -> new DatabaseSnapshot(dailySnowVal, baseVal, temperature, windSpd, cardinalDir))
         dao.setSnapshotForResort(databaseSnapshots)
 
         Ok("Scraping Finished")

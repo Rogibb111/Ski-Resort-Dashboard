@@ -1,14 +1,32 @@
 package models
 
+import com.fasterxml.jackson.module.scala.deser.overrides
+
 sealed trait CardinalDirections
-case object North extends CardinalDirections
-case object NorthEast extends CardinalDirections
-case object East extends CardinalDirections
-case object SouthEast extends CardinalDirections
-case object South extends CardinalDirections
-case object SouthWest extends CardinalDirections
-case object West extends CardinalDirections
-case object NorthWest extends CardinalDirections
+case object North extends CardinalDirections {
+    override def toString: String = "North"
+}
+case object NorthEast extends CardinalDirections {
+    override def toString: String = "NorthEast"
+}
+case object East extends CardinalDirections {
+    override def toString: String = "East"
+}
+case object SouthEast extends CardinalDirections {
+    override def toString: String = "SouthEast"
+}
+case object South extends CardinalDirections {
+    override def toString: String = "South"
+}
+case object SouthWest extends CardinalDirections {
+    override def toString: String = "SouthWest"
+}
+case object West extends CardinalDirections {
+    override def toString: String = "West"
+}
+case object NorthWest extends CardinalDirections {
+    override def toString: String = "NorthWest"
+}
 
 object CardinalDirectionsMapper {
     def fromDegree(value: Int): Option[CardinalDirections] = value match {
