@@ -1,8 +1,16 @@
 package models
 
-import javax.smartcardio.Card
+sealed trait CardinalDirections
+case object North extends CardinalDirections
+case object NorthEast extends CardinalDirections
+case object East extends CardinalDirections
+case object SouthEast extends CardinalDirections
+case object South extends CardinalDirections
+case object SouthWest extends CardinalDirections
+case object West extends CardinalDirections
+case object NorthWest extends CardinalDirections
 
-sealed trait CardinalDirections {
+object CardinalDirectionsMapper {
     def fromDegree(value: Int): Option[CardinalDirections] = value match {
         case x if x >= 337.5 || x < 22.5 => Some(North) // 0 degrees in center of range
         case x if x >= 22.5 || x < 67.5 => Some(NorthEast) // 45 degrees in center of range
@@ -15,11 +23,3 @@ sealed trait CardinalDirections {
         case _ => None
     }
 }
-case object North extends CardinalDirections
-case object NorthEast extends CardinalDirections
-case object East extends CardinalDirections
-case object SouthEast extends CardinalDirections
-case object South extends CardinalDirections
-case object SouthWest extends CardinalDirections
-case object West extends CardinalDirections
-case object NorthWest extends CardinalDirections

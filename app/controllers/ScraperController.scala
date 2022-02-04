@@ -34,6 +34,10 @@ class ScraperController @Inject()(val controllerComponents: ControllerComponents
         val tcellMidLift = liveWeather.find(el => (el >> element(".live-snow__table-row .live-snow__table-cell--elevation")).text == "Middle Lift:").get
         val temperature = (tcellMidLift >> element(".temp")).text.toInt
         val windSpd = (tcellMidLift >> element(".wind-icon__val")).text.toInt
+        val transform = (tcellMidLift >> element(".wind-icon__arrow")).attr("transform")
+        val degreeExtractor = "[a-z]+\\((\\d+)\\)".r
+        val degreeExtractor(degreeStr) = transform
+        val cardinalDir = CardinalDirectionsMapper.fromDegree(degreeStr.toInt)
 
         
 
