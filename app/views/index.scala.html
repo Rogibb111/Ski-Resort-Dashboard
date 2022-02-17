@@ -1,5 +1,24 @@
-@()
+@(snapshotArray: Array[ResortSnapshot])
 
 @main("Welcome to Play") {
-  <h1>Welcome to Play!</h1>
+  <h1>Ski Resort Dashboard</h1>
+  <p>
+    This is a small and simple dashboard to look up current and past conditions at a couple of Colorado Ski Resorts. Currently you can look at the 
+    current snow depth, the amount of snow that has fallen in the last 24 hours, the current temperature, the current wind speed, and the current wind
+    direction. I sample this data for all of the resorts two times a day, once in the morning and once in the afternoon. You can see all of the 
+    data that I have collected so far using the graphs on each resort page. Enjoy!
+  </p>
+
+  <ul>
+    @for(resortSnapshot <- snapshotArray) {
+      <li>@resortSnapshot.resort.toString() 
+        24 Hour Snowfall: @resortSnapshot.resortData.dailySnow inches 
+        Current Snow Depth: @resortSnapshot.resortData.baseDepth inches
+        Current Temperature: @resortSnapshot.resortData.temperature farenheit
+        Current Wind Speed: @resortSnapshot.resortData.windSpeed mph
+        Current Wind Direction: @resortSnapshot.resortData.windDir.toString()
+      </li>
+    }
+  </ul>
+  
 }

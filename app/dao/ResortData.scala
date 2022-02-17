@@ -19,6 +19,7 @@ import slick.jdbc.meta.MTable
 import org.joda.time.Seconds
 
 import models._
+import scala.concurrent.Future
 
 
 
@@ -47,9 +48,15 @@ class ResortData @Inject() (protected val dbConfigProvider: DatabaseConfigProvid
             })
         }
 
+        def getLatestSnapshotForAllResorts: (Future[Array[(Any, String)]]) = {
+            val q = resortData.sortBy(_.created.desc).take(1)
+            val tableNames = resortData.baseTableRow.create_*.map(_.name).toArray
+            var rowValuesFuture: Future[(String, Timestamp)] = db.run(q.result).map(_.last)
+            rowValuesFuture.map(rv => rv.productIterator.toArray.dropRight(1).zip(tableNames))
+        }
+
         def setSnapshotForResort(databaseSnapshots: Map[Resorts, DatabaseSnapshot]): Unit = {
             val insertAction = DBIO.seq(
-                
                 resortData += (getResortSnapshot(ArapahoeBasin, databaseSnapshots).toJson(), new java.sql.Timestamp(new Date().getTime()))
             )
             db.run(insertAction).onComplete({
@@ -68,7 +75,7 @@ class ResortData @Inject() (protected val dbConfigProvider: DatabaseConfigProvid
         }
 
         private class ResortDataSchema(tag: Tag) extends Table[(String, Timestamp)](tag, "RESORT_DATA") {
-            def arapahoeBasin = column[String]("ARAPAHOE_BASIN")
+            def arapahoeBasin = column[String](ArapahoeBasin.databaseName)
             def created = column[Timestamp]("CREATED")
             def * : ProvenShape[(String, Timestamp)] = (arapahoeBasin, created)
         }

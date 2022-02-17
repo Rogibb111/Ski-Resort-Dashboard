@@ -30,21 +30,21 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents, v
    * will be called when the application receives a `GET` request with
    * a path of `/`.
    */
-  def index() = Action { implicit request: Request[AnyContent] =>
-
-
-    Ok(views.html.index())
+  def index() = Action.async { implicit request: Request[AnyContent] =>
+    resortData.getLatestSnapshotForAllResorts.map(
+      rvArray => rvArray.map(f => ResortSnapshotFactory.fromJson(f._1.asInstanceOf[String], ResortsFactory.fromString(f._2)))//ResortSnapshotFactory.fromJson(f(0).asInstanceOf[String], ta).asInstanceOf[ResortSnapshot]
+    ).map(snapshotArray => Ok(views.html.index(snapshotArray)))
   }
 
-  def scrape() = Action { implicit request: Request[AnyContent] => 
+  def scrape() = Action.async { implicit request: Request[AnyContent] => 
     var resortDataMap: Map[Resorts, DatabaseSnapshot] = Map[Resorts, DatabaseSnapshot]()
     var resortFutureSeq: ArrayBuffer[Future[Unit]] = ArrayBuffer.empty
     
     resortFutureSeq.addOne(generateFuture(resortDataMap, ArapahoeBasin))
-    
-    Await.ready(Future.sequence(resortFutureSeq), Duration.create(10, SECONDS))
-    resortData.setSnapshotForResort(resortDataMap.toMap)
-    Ok
+    Future.sequence(resortFutureSeq).map(futureArray => {
+      resortData.setSnapshotForResort(resortDataMap.toMap)
+      Ok
+    })
   }
 
   private def generateFuture(resortDataMap: Map[Resorts, DatabaseSnapshot], resort: Resorts): Future[Unit] = {
