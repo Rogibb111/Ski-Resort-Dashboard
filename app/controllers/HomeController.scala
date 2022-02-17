@@ -31,8 +31,11 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents, v
    * a path of `/`.
    */
   def index() = Action { implicit request: Request[AnyContent] =>
-
-
+    val resortSnapshotData = resortData.getLatestSnapshotForAllResorts.map(
+      rvArray => rvArray.map(f => ResortSnapshotFactory.fromJson(f._1.asInstanceOf[String], ResortsFactory.fromString(f._2)))//ResortSnapshotFactory.fromJson(f(0).asInstanceOf[String], ta).asInstanceOf[ResortSnapshot]
+    )
+    val resortSnapshotFuture = Await.ready(resortSnapshotData, Duration.create(10, SECONDS))
+    resortSnapshotFuture.value.get.get.foreach(println)
     Ok(views.html.index())
   }
 
