@@ -55,6 +55,12 @@ class ResortData @Inject() (protected val dbConfigProvider: DatabaseConfigProvid
             rowValuesFuture.map(rv => rv.productIterator.toArray.dropRight(1).zip(tableNames))
         }
 
+        def getAllSnapshotsForSingleResort(resort: Resorts): Future[Array[String]] = {
+            val resortDBName = resort.databaseName
+            val q = sql"""select "#$resortDBName" FROM "RESORT_DATA" order by "CREATED"""".as[String].map(_.toArray)
+            db.run(q)
+        }
+
         def setSnapshotForResort(databaseSnapshots: Map[Resorts, DatabaseSnapshot]): Unit = {
             val insertAction = DBIO.seq(
                 resortData += (getResortSnapshot(ArapahoeBasin, databaseSnapshots).toJson(), new java.sql.Timestamp(new Date().getTime()))
