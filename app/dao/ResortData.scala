@@ -13,9 +13,6 @@ import scala.util.Success
 import scala.util.Failure
 import java.sql.Timestamp
 import slick.lifted.ProvenShape
-import scala.concurrent.Await
-import scala.concurrent.duration.Duration
-import slick.jdbc.meta.MTable
 import org.joda.time.Seconds
 
 import models._
@@ -55,9 +52,9 @@ class ResortData @Inject() (protected val dbConfigProvider: DatabaseConfigProvid
             rowValuesFuture.map(rv => rv.productIterator.toArray.dropRight(1).zip(tableNames))
         }
 
-        def getAllSnapshotsForSingleResort(resort: Resorts): Future[Array[String]] = {
+        def getAllSnapshotsForSingleResort(resort: Resorts): Future[Array[(String, Timestamp)]] = {
             val resortDBName = resort.databaseName
-            val q = sql"""select "#$resortDBName" FROM "RESORT_DATA" order by "CREATED"""".as[String].map(_.toArray)
+            val q = sql"""select "#$resortDBName", "CREATED" FROM "RESORT_DATA" order by "CREATED"""".as[(String, Timestamp)].map(_.toArray)
             db.run(q)
         }
 
