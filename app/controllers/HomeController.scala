@@ -11,7 +11,6 @@ import collection.mutable.ArrayBuffer
 import collection.mutable.Map
 import scala.concurrent.Future
 import scala.concurrent._
-import scala.concurrent.duration.{SECONDS, Duration}
 import ExecutionContext.Implicits.global 
 import scrapers.ScraperFactory
 
@@ -32,7 +31,7 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents, v
    */
   def index() = Action.async { implicit request: Request[AnyContent] =>
     resortData.getLatestSnapshotForAllResorts.map(
-      rvArray => rvArray.map(f => ResortSnapshotFactory.fromJson(f._1.asInstanceOf[String], ResortsFactory.fromString(f._2)))//ResortSnapshotFactory.fromJson(f(0).asInstanceOf[String], ta).asInstanceOf[ResortSnapshot]
+      rvArray => rvArray.map(f => ResortSnapshotFactory.resortSnapshotFromJson(f._1.asInstanceOf[String], ResortsFactory.fromString(f._2)))//ResortSnapshotFactory.fromJson(f(0).asInstanceOf[String], ta).asInstanceOf[ResortSnapshot]
     ).map(snapshotArray => Ok(views.html.index(snapshotArray)))
   }
 

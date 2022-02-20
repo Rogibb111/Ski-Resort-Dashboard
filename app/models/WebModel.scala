@@ -29,7 +29,7 @@ object ResortSnapshotFactory {
         new ResortSnapshot(resort, resortData.get)
     }
 
-    def ResortDataSnapshotFromJson(data: String, timestamp: String): ResortDataSnapshot = {
+    def resortDataSnapshotFromJson(data: String, timestamp: String): ResortDataSnapshot = {
         val jsonData = Json.parse(data)
         val resortData = Json.fromJson[ResortData](jsonData)
         new ResortDataSnapshot(timestamp, resortData.get)
@@ -38,7 +38,7 @@ object ResortSnapshotFactory {
 
 final case class ResortData(dailySnow: Int, baseDepth: Int, temperature: Int, windSpeed: Int, windDir: CardinalDirections) 
 final case class ResortSnapshot(resort: Resorts, resortData: ResortData)
-final case class ResortDataSnapshot(timestamp: TimeStamp, resortData: ResortData)
+final case class ResortDataSnapshot(timestamp: String, resortData: ResortData)
 
 object ResortsFactory {
     def fromString(resort: String): Resorts = {
