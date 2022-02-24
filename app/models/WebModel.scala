@@ -41,9 +41,15 @@ final case class ResortSnapshot(resort: Resorts, resortData: ResortData)
 final case class ResortDataSnapshot(timestamp: String, resortData: ResortData)
 
 object ResortsFactory {
-    def fromString(resort: String): Resorts = {
+    def fromDBString(resort: String): Resorts = {
         resort match {
             case ArapahoeBasin.databaseName => ArapahoeBasin
+            case default => throw new Error("Tried to read string that wasn't a Resort")
+        }
+    }
+    def fromNameString(resort: String): Resorts = {
+        resort match {
+            case resort if resort == ArapahoeBasin.toString() => ArapahoeBasin
             case default => throw new Error("Tried to read string that wasn't a Resort")
         }
     }
