@@ -4,7 +4,11 @@
 # ~~~~
 
 # An example controller showing a sample home page
-GET     /                           controllers.HomeController.index()
+GET     /                               controllers.HomeController.index()
+
+# Route for getting all data from a single resort
+
+GET     /:resort                     controllers.HomeController.resort(resort: models.Resorts) 
 
 # Route for turning on scraping job
 GET     /scrape                         controllers.HomeController.scrape()

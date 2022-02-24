@@ -23,20 +23,33 @@ object ResortSnapshotFactory {
         (JsPath \ "windDir").read[CardinalDirections]
     ) (ResortData.apply _)
 
-    def fromJson(data: String, resort:Resorts): ResortSnapshot = {
+    def resortSnapshotFromJson(data: String, resort:Resorts): ResortSnapshot = {
         val jsonData = Json.parse(data)
         val resortData = Json.fromJson[ResortData](jsonData)
         new ResortSnapshot(resort, resortData.get)
+    }
+
+    def resortDataSnapshotFromJson(data: String, timestamp: String): ResortDataSnapshot = {
+        val jsonData = Json.parse(data)
+        val resortData = Json.fromJson[ResortData](jsonData)
+        new ResortDataSnapshot(timestamp, resortData.get)
     }
 }
 
 final case class ResortData(dailySnow: Int, baseDepth: Int, temperature: Int, windSpeed: Int, windDir: CardinalDirections) 
 final case class ResortSnapshot(resort: Resorts, resortData: ResortData)
+final case class ResortDataSnapshot(timestamp: String, resortData: ResortData)
 
 object ResortsFactory {
-    def fromString(resort: String): Resorts = {
+    def fromDBString(resort: String): Resorts = {
         resort match {
             case ArapahoeBasin.databaseName => ArapahoeBasin
+            case default => throw new Error("Tried to read string that wasn't a Resort")
+        }
+    }
+    def fromNameString(resort: String): Resorts = {
+        resort match {
+            case resort if resort == ArapahoeBasin.toString() => ArapahoeBasin
             case default => throw new Error("Tried to read string that wasn't a Resort")
         }
     }

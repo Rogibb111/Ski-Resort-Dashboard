@@ -4,7 +4,6 @@ import com.google.inject.Inject
 import play.api.db.slick.DatabaseConfigProvider
 import slick.jdbc.PostgresProfile.api._
 import scala.concurrent.ExecutionContext
-import play.api.mvc.AbstractController
 import play.api.db.slick.HasDatabaseConfigProvider
 import slick.jdbc.JdbcProfile
 import java.util.Date
@@ -13,10 +12,6 @@ import scala.util.Success
 import scala.util.Failure
 import java.sql.Timestamp
 import slick.lifted.ProvenShape
-import scala.concurrent.Await
-import scala.concurrent.duration.Duration
-import slick.jdbc.meta.MTable
-import org.joda.time.Seconds
 
 import models._
 import scala.concurrent.Future
@@ -53,6 +48,12 @@ class ResortData @Inject() (protected val dbConfigProvider: DatabaseConfigProvid
             val tableNames = resortData.baseTableRow.create_*.map(_.name).toArray
             var rowValuesFuture: Future[(String, Timestamp)] = db.run(q.result).map(_.last)
             rowValuesFuture.map(rv => rv.productIterator.toArray.dropRight(1).zip(tableNames))
+        }
+
+        def getAllSnapshotsForSingleResort(resort: Resorts): Future[Array[(String, Timestamp)]] = {
+            val resortDBName = resort.databaseName
+            val q = sql"""select "#$resortDBName", "CREATED" FROM "RESORT_DATA" order by "CREATED"""".as[(String, Timestamp)].map(_.toArray)
+            db.run(q)
         }
 
         def setSnapshotForResort(databaseSnapshots: Map[Resorts, DatabaseSnapshot]): Unit = {

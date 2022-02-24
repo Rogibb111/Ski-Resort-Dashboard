@@ -1,0 +1,18 @@
+@(snapshotArray: Array[ResortDataSnapshot], resort: Resorts)
+
+@main("Ski Resort Dashboard") {
+    <h1>@resort.toString()</h1>
+
+    <ul>
+        @for(snapshot <- snapshotArray) {
+            <li>Time: @snapshot.timestamp
+                24 Hour Snowfall: @snapshot.resortData.dailySnow inches 
+                Current Snow Depth: @snapshot.resortData.baseDepth inches
+                Current Temperature: @snapshot.resortData.temperature farenheit
+                Current Wind Speed: @snapshot.resortData.windSpeed mph
+                Current Wind Direction: @snapshot.resortData.windDir.toString()
+            </li>
+        }
+    </ul>
+
+}
