@@ -31,8 +31,14 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents, v
    */
   def index() = Action.async { implicit request: Request[AnyContent] =>
     resortData.getLatestSnapshotForAllResorts.map(
-      rvArray => rvArray.map(f => ResortSnapshotFactory.resortSnapshotFromJson(f._1.asInstanceOf[String], ResortsFactory.fromString(f._2)))//ResortSnapshotFactory.fromJson(f(0).asInstanceOf[String], ta).asInstanceOf[ResortSnapshot]
+      rvArray => rvArray.map(f => ResortSnapshotFactory.resortSnapshotFromJson(f._1.asInstanceOf[String], ResortsFactory.fromDBString(f._2)))//ResortSnapshotFactory.fromJson(f(0).asInstanceOf[String], ta).asInstanceOf[ResortSnapshot]
     ).map(snapshotArray => Ok(views.html.index(snapshotArray)))
+  }
+
+  def resort(resort: Resorts) = Action.async { implicit request: Request[AnyContent] => 
+    resortData.getAllSnapshotsForSingleResort(resort).map(
+      dataArray => dataArray.map(v => ResortSnapshotFactory.resortDataSnapshotFromJson(v._1, v._2.toString()))
+    ).map(dataArray => Ok(views.html.resort(dataArray, resort)))
   }
 
   def scrape() = Action.async { implicit request: Request[AnyContent] => 
