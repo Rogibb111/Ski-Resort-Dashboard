@@ -4,7 +4,6 @@ import com.google.inject.Inject
 import play.api.db.slick.DatabaseConfigProvider
 import slick.jdbc.PostgresProfile.api._
 import scala.concurrent.ExecutionContext
-import play.api.mvc.AbstractController
 import play.api.db.slick.HasDatabaseConfigProvider
 import slick.jdbc.JdbcProfile
 import java.util.Date
@@ -13,7 +12,6 @@ import scala.util.Success
 import scala.util.Failure
 import java.sql.Timestamp
 import slick.lifted.ProvenShape
-import org.joda.time.Seconds
 
 import models._
 import scala.concurrent.Future
