@@ -1,3 +1,5 @@
 #!/bin/bash
-   
-curl --write-out "%{http_code}\n" "http://localhost:9000/scrape" 
+
+URL="${SCRAPE_URL:-http://localhost:9000/scrape}"
+
+curl --write-out "%{http_code}\n" $URL
