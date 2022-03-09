@@ -1,4 +1,4 @@
-#!/usr/bin/env java
+#!/usr/bin/env sbt
 
 import java.net.{URL, HttpURLConnection}
 val url = sys.env.getOrElse("SCRAPE_URL", "http://localhost:9000/scrape")
