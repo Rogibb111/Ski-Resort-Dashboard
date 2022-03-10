@@ -7,8 +7,10 @@
 GET     /                               controllers.HomeController.index()
 
 # Route for getting all data from a single resort
+GET     /resorts/:resort                     controllers.HomeController.resort(resort: models.Resorts) 
 
-GET     /:resort                     controllers.HomeController.resort(resort: models.Resorts) 
+# Route for turning on scraping job
+GET     /scrape                         controllers.HomeController.scrape()
 
 # Route for turning on scraping job
 GET     /scrape                         controllers.HomeController.scrape()
