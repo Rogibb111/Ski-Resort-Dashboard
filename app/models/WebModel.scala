@@ -44,12 +44,14 @@ object ResortsFactory {
     def fromDBString(resort: String): Resorts = {
         resort match {
             case ArapahoeBasin.databaseName => ArapahoeBasin
+            case Breckenridge.databaseName => Breckenridge
             case default => throw new Error("Tried to read string that wasn't a Resort")
         }
     }
     def fromNameString(resort: String): Resorts = {
         resort match {
             case resort if resort == ArapahoeBasin.toString() => ArapahoeBasin
+            case resort if resort == Breckenridge.toString() => Breckenridge
             case default => throw new Error("Tried to read string that wasn't a Resort")
         }
     }
@@ -58,4 +60,9 @@ sealed trait Resorts { val databaseName: String }
 case object ArapahoeBasin extends Resorts {
     override def toString: String = "Arapahoe-Basin"
     override val databaseName = "ARAPAHOE_BASIN"
+}
+case object Breckenridge extends Resorts {
+    override def toString: String = "Breckenridge"
+
+    override val databaseName: String = "BRECKENRIDGE"
 }

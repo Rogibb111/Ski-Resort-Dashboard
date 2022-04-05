@@ -11,6 +11,7 @@ import scala.concurrent.Future
 import scala.concurrent._
 import ExecutionContext.Implicits.global 
 import scrapers.ScraperFactory
+import play.api.libs.ws.WSClient
 
 
 /**
@@ -18,7 +19,7 @@ import scrapers.ScraperFactory
  * application's home page.
  */
 @Singleton
-class HomeController @Inject()(val controllerComponents: ControllerComponents, val resortData: ResortData) extends BaseController {
+class HomeController @Inject()(val controllerComponents: ControllerComponents, val resortData: ResortData, val ws: WSClient) extends BaseController {
 
   /**
    * Create an Action to render an HTML page.
@@ -44,6 +45,7 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents, v
     var resortFutureSeq: ArrayBuffer[Future[Unit]] = ArrayBuffer.empty
     
     resortFutureSeq.addOne(generateFuture(resortDataMap, ArapahoeBasin))
+    resortFutureSeq.addOne(generateFuture(resortDataMap, Breckenridge))
     Future.sequence(resortFutureSeq).map(futureArray => {
       resortData.setSnapshotForResort(resortDataMap.toMap)
       Ok
@@ -53,7 +55,7 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents, v
   private def generateFuture(resortDataMap: Map[Resorts, DatabaseSnapshot], resort: Resorts): Future[Unit] = {
     Future {
       try {
-        val scraper = ScraperFactory.initializeScraper(resort)
+        val scraper = ScraperFactory.initializeScraper(resort, ws)
         resortDataMap.put(resort, scraper.scrapeResort())
       } catch { case e: Exception => println(e.printStackTrace()) }
     }
