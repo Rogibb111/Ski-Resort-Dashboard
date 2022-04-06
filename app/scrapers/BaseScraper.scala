@@ -22,6 +22,7 @@ object ScraperFactory {
       case ArapahoeBasin => new ABasinScraper
       case Breckenridge => new EpicScraper(ws, Breckenridge)
       case BeaverCreek => new EpicScraper(ws, BeaverCreek)
+      case Vail => new EpicScraper(ws, Vail)
       
     }
   }
