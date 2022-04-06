@@ -20,7 +20,8 @@ object ScraperFactory {
   ): BaseScraper = {
     resort match {
       case ArapahoeBasin => new ABasinScraper
-      case Breckenridge => new BreckScraper(ws)
+      case Breckenridge => new EpicScraper(ws, Breckenridge)
+      case BeaverCreek => new EpicScraper(ws, BeaverCreek)
       
     }
   }

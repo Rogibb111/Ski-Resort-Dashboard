@@ -33,7 +33,8 @@ class ResortData @Inject() (protected val dbConfigProvider: DatabaseConfigProvid
         
         private val setup = DBIO.seq(
             resortData.schema.createIfNotExists,
-            columnCheckandAdd(Breckenridge)
+            columnCheckandAdd(Breckenridge),
+            columnCheckandAdd(BeaverCreek)
         )
 
         db.run(setup).onComplete({
@@ -45,7 +46,7 @@ class ResortData @Inject() (protected val dbConfigProvider: DatabaseConfigProvid
         def getLatestSnapshotForAllResorts: (Future[Array[(Any, String)]]) = {
             val q = resortData.sortBy(_.created.desc).take(1)
             val tableNames = resortData.baseTableRow.create_*.map(_.name).toArray
-            var rowValuesFuture: Future[(String, String, Timestamp)] = db.run(q.result).map(_.last)
+            var rowValuesFuture: Future[(String, String, String,  Timestamp)] = db.run(q.result).map(_.last)
             rowValuesFuture.map(rv => rv.productIterator.toArray.dropRight(1).zip(tableNames))
         }
 
@@ -57,7 +58,10 @@ class ResortData @Inject() (protected val dbConfigProvider: DatabaseConfigProvid
 
         def setSnapshotForResort(databaseSnapshots: Map[Resorts, DatabaseSnapshot]): Unit = {
             val insertAction = DBIO.seq(
-                resortData += (getResortSnapshot(ArapahoeBasin, databaseSnapshots).toJson(), getResortSnapshot(Breckenridge, databaseSnapshots).toJson(), new java.sql.Timestamp(new Date().getTime()))
+                resortData += (getResortSnapshot(ArapahoeBasin, databaseSnapshots).toJson(),
+                 getResortSnapshot(Breckenridge, databaseSnapshots).toJson(), 
+                 getResortSnapshot(BeaverCreek, databaseSnapshots).toJson(),
+                 new java.sql.Timestamp(new Date().getTime()))
             )
             db.run(insertAction).onComplete({
                 case Success(value) => println("Set snapshot success!")
@@ -74,10 +78,11 @@ class ResortData @Inject() (protected val dbConfigProvider: DatabaseConfigProvid
             return snapshotOption.get
         }
 
-        private class ResortDataSchema(tag: Tag) extends Table[(String, String, Timestamp)](tag, "RESORT_DATA") {
+        private class ResortDataSchema(tag: Tag) extends Table[(String, String, String, Timestamp)](tag, "RESORT_DATA") {
             def arapahoeBasin = column[String](ArapahoeBasin.databaseName)
             def breckenridge = column[String](Breckenridge.databaseName)
+            def beaverCreek = column[String](BeaverCreek.databaseName)
             def created = column[Timestamp]("CREATED")
-            def * : ProvenShape[(String, String, Timestamp)] = (arapahoeBasin, breckenridge, created)
+            def * : ProvenShape[(String, String, String, Timestamp)] = (arapahoeBasin, breckenridge, beaverCreek, created)
         }
     }

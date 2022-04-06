@@ -46,6 +46,7 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents, v
     
     resortFutureSeq.addOne(generateFuture(resortDataMap, ArapahoeBasin))
     resortFutureSeq.addOne(generateFuture(resortDataMap, Breckenridge))
+    resortFutureSeq.addOne(generateFuture(resortDataMap, BeaverCreek))
     Future.sequence(resortFutureSeq).map(futureArray => {
       resortData.setSnapshotForResort(resortDataMap.toMap)
       Ok
