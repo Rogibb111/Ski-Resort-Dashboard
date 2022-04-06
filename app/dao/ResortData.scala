@@ -3,18 +3,16 @@ package dao
 import com.google.inject.Inject
 import play.api.db.slick.DatabaseConfigProvider
 import slick.jdbc.PostgresProfile.api._
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ ExecutionContext, Future }
 import play.api.db.slick.HasDatabaseConfigProvider
 import slick.jdbc.JdbcProfile
-import java.util.Date
 import javax.inject.Singleton
-import scala.util.Success
-import scala.util.Failure
+import scala.util.{ Success, Failure }
+import java.util.Date
 import java.sql.Timestamp
 import slick.lifted.ProvenShape
 
 import models._
-import scala.concurrent.Future
 
 
 
@@ -26,27 +24,28 @@ class ResortData @Inject() (protected val dbConfigProvider: DatabaseConfigProvid
     implicit ec: ExecutionContext
 ) extends HasDatabaseConfigProvider[JdbcProfile] {
 
+        //----- DataBase Setup and Migrations -----\\
         private val resortData = TableQuery[ResortDataSchema]
+        private def columnCheckandAdd(resort: Resorts) = {
+            val resortDBName = resort.databaseName
+            sql"""ALTER TABLE "RESORT_DATA" ADD COLUMN IF NOT EXISTS "#$resortDBName" VARCHAR""".asUpdate
+        }
+        
         private val setup = DBIO.seq(
             resortData.schema.createIfNotExists,
+            columnCheckandAdd(Breckenridge)
         )
 
         db.run(setup).onComplete({
             case Success(value) => println("Success!")
             case Failure(exception) => println(exception.printStackTrace())
         })
-
-        def getAllResortSnapshots(): Unit = {
-            db.run(resortData.result).map(_.foreach {
-                case (arapahoeBasin, timestamp) => 
-                    println(" " + arapahoeBasin + "\t" + timestamp)
-            })
-        }
-
+        
+        // ----- Database Queries ----- \\
         def getLatestSnapshotForAllResorts: (Future[Array[(Any, String)]]) = {
             val q = resortData.sortBy(_.created.desc).take(1)
             val tableNames = resortData.baseTableRow.create_*.map(_.name).toArray
-            var rowValuesFuture: Future[(String, Timestamp)] = db.run(q.result).map(_.last)
+            var rowValuesFuture: Future[(String, String, Timestamp)] = db.run(q.result).map(_.last)
             rowValuesFuture.map(rv => rv.productIterator.toArray.dropRight(1).zip(tableNames))
         }
 
@@ -58,7 +57,7 @@ class ResortData @Inject() (protected val dbConfigProvider: DatabaseConfigProvid
 
         def setSnapshotForResort(databaseSnapshots: Map[Resorts, DatabaseSnapshot]): Unit = {
             val insertAction = DBIO.seq(
-                resortData += (getResortSnapshot(ArapahoeBasin, databaseSnapshots).toJson(), new java.sql.Timestamp(new Date().getTime()))
+                resortData += (getResortSnapshot(ArapahoeBasin, databaseSnapshots).toJson(), getResortSnapshot(Breckenridge, databaseSnapshots).toJson(), new java.sql.Timestamp(new Date().getTime()))
             )
             db.run(insertAction).onComplete({
                 case Success(value) => println("Set snapshot success!")
@@ -75,9 +74,10 @@ class ResortData @Inject() (protected val dbConfigProvider: DatabaseConfigProvid
             return snapshotOption.get
         }
 
-        private class ResortDataSchema(tag: Tag) extends Table[(String, Timestamp)](tag, "RESORT_DATA") {
+        private class ResortDataSchema(tag: Tag) extends Table[(String, String, Timestamp)](tag, "RESORT_DATA") {
             def arapahoeBasin = column[String](ArapahoeBasin.databaseName)
+            def breckenridge = column[String](Breckenridge.databaseName)
             def created = column[Timestamp]("CREATED")
-            def * : ProvenShape[(String, Timestamp)] = (arapahoeBasin, created)
+            def * : ProvenShape[(String, String, Timestamp)] = (arapahoeBasin, breckenridge, created)
         }
     }
