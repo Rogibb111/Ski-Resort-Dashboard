@@ -12,11 +12,15 @@ import models._
 import models.CardinalDirections
 import models.CardinalDirectionsMapper
 import scala.concurrent.Awaitable
-
+import play.api.libs.ws.WSClient
+import scala.concurrent.ExecutionContext
 object ScraperFactory {
-  def initializeScraper(resort: Resorts): BaseScraper = {
+  def initializeScraper(resort: Resorts, ws: WSClient)(
+    implicit ec: ExecutionContext
+  ): BaseScraper = {
     resort match {
       case ArapahoeBasin => new ABasinScraper
+      case Breckenridge => new BreckScraper(ws)
       
     }
   }

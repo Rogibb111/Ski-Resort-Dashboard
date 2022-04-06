@@ -2,6 +2,7 @@ package models
 
 import play.api.libs.json._
 import play.api.libs.functional.syntax._
+import models.North
 
 object ResortSnapshotFactory {
     implicit val cardinalDirectionsRead: Reads[CardinalDirections] = Reads {
@@ -30,9 +31,16 @@ object ResortSnapshotFactory {
     }
 
     def resortDataSnapshotFromJson(data: String, timestamp: String): ResortDataSnapshot = {
-        val jsonData = Json.parse(data)
-        val resortData = Json.fromJson[ResortData](jsonData)
-        new ResortDataSnapshot(timestamp, resortData.get)
+            val dataOption = Option(data)
+
+            if (dataOption.getOrElse("").isEmpty()) {
+                val resortData = new ResortData(0,0,0,0,North)
+                new ResortDataSnapshot("", resortData)
+            } else {
+                val jsonData = Json.parse(data)
+                val resortData = Json.fromJson[ResortData](jsonData)
+                new ResortDataSnapshot(timestamp, resortData.get)
+            }
     }
 }
 
@@ -44,12 +52,14 @@ object ResortsFactory {
     def fromDBString(resort: String): Resorts = {
         resort match {
             case ArapahoeBasin.databaseName => ArapahoeBasin
+            case Breckenridge.databaseName => Breckenridge
             case default => throw new Error("Tried to read string that wasn't a Resort")
         }
     }
     def fromNameString(resort: String): Resorts = {
         resort match {
             case resort if resort == ArapahoeBasin.toString() => ArapahoeBasin
+            case resort if resort == Breckenridge.toString() => Breckenridge
             case default => throw new Error("Tried to read string that wasn't a Resort")
         }
     }
@@ -58,4 +68,9 @@ sealed trait Resorts { val databaseName: String }
 case object ArapahoeBasin extends Resorts {
     override def toString: String = "Arapahoe-Basin"
     override val databaseName = "ARAPAHOE_BASIN"
+}
+case object Breckenridge extends Resorts {
+    override def toString: String = "Breckenridge"
+
+    override val databaseName: String = "BRECKENRIDGE"
 }
