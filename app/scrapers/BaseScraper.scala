@@ -23,6 +23,7 @@ object ScraperFactory {
       case Breckenridge => new EpicScraper(ws, Breckenridge)
       case BeaverCreek => new EpicScraper(ws, BeaverCreek)
       case Vail => new EpicScraper(ws, Vail)
+      case Keystone => new EpicScraper(ws, Keystone)
       
     }
   }

@@ -55,6 +55,7 @@ object ResortsFactory {
             case Breckenridge.databaseName => Breckenridge
             case BeaverCreek.databaseName => BeaverCreek
             case Vail.databaseName => Vail
+            case Keystone.databaseName => Keystone
             case default => throw new Error("Tried to read string that wasn't a Resort")
         }
     }
@@ -64,6 +65,7 @@ object ResortsFactory {
             case resort if resort == Breckenridge.toString() => Breckenridge
             case resort if resort == BeaverCreek.toString() => BeaverCreek
             case resort if resort == Vail.toString() => Vail
+            case resort if resort == Keystone.toString() => Keystone
             case default => throw new Error("Tried to read string that wasn't a Resort")
         }
     }
@@ -89,4 +91,10 @@ case object Vail extends EpicResorts {
     override def toString: String = "Vail"
     override val databaseName: String = "VAIL"
     override val scrapeUrl: String = "https://www.vail.com/api/PageApi/GetWeatherDataForHeader"
+}
+
+case object Keystone extends EpicResorts {
+    override def toString: String = "Keystone-Resort"
+    override val databaseName: String = "KEYSTONE"
+    override val scrapeUrl: String = "https://www.keystoneresort.com/api/PageApi/GetWeatherDataForHeader"   
 }
