@@ -10,19 +10,20 @@ import scala.util.Failure
 import play.api.libs.json._
 import scala.concurrent.Await
 import scala.concurrent.duration._
+import models.EpicResorts
 
 
 case class SnowMeasurement (Inches: String, Centimeters: String)
 case class SnowResult (Depth: SnowMeasurement, Description: String)
 
 
-class BreckScraper (ws: WSClient)(
+class EpicScraper (ws: WSClient, resort: EpicResorts)(
     implicit ec: ExecutionContext
-) extends BaseScraper(Breckenridge)  {
+) extends BaseScraper(resort)  {
   implicit val SnowMeasurementReads = Json.reads[SnowMeasurement]
   implicit val SnowResultReads = Json.reads[SnowResult]
 
-  private val request = ws.url("https://www.breckenridge.com/api/PageApi/GetWeatherDataForHeader")
+  private val request = ws.url(resort.scrapeUrl)
   private val snowReportResult: Set[SnowResult] = Await.result(request.get().map { response =>
     (response.json \ "SnowReportSections").validate[Set[SnowResult]]
   }, 5.second).get
