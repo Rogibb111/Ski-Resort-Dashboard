@@ -53,6 +53,7 @@ object ResortsFactory {
         resort match {
             case ArapahoeBasin.databaseName => ArapahoeBasin
             case Breckenridge.databaseName => Breckenridge
+            case BeaverCreek.databaseName => BeaverCreek
             case default => throw new Error("Tried to read string that wasn't a Resort")
         }
     }
@@ -60,6 +61,7 @@ object ResortsFactory {
         resort match {
             case resort if resort == ArapahoeBasin.toString() => ArapahoeBasin
             case resort if resort == Breckenridge.toString() => Breckenridge
+            case resort if resort == BeaverCreek.toString() => BeaverCreek
             case default => throw new Error("Tried to read string that wasn't a Resort")
         }
     }
