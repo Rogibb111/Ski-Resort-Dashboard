@@ -2,6 +2,7 @@ package models
 
 import play.api.libs.json._
 import play.api.libs.functional.syntax._
+import models.North
 
 object ResortSnapshotFactory {
     implicit val cardinalDirectionsRead: Reads[CardinalDirections] = Reads {
@@ -30,9 +31,16 @@ object ResortSnapshotFactory {
     }
 
     def resortDataSnapshotFromJson(data: String, timestamp: String): ResortDataSnapshot = {
-        val jsonData = Json.parse(data)
-        val resortData = Json.fromJson[ResortData](jsonData)
-        new ResortDataSnapshot(timestamp, resortData.get)
+            val dataOption = Option(data)
+
+            if (dataOption.getOrElse("").isEmpty()) {
+                val resortData = new ResortData(0,0,0,0,North)
+                new ResortDataSnapshot("", resortData)
+            } else {
+                val jsonData = Json.parse(data)
+                val resortData = Json.fromJson[ResortData](jsonData)
+                new ResortDataSnapshot(timestamp, resortData.get)
+            }
     }
 }
 
