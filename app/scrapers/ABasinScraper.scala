@@ -9,7 +9,7 @@ import net.ruippeixotog.scalascraper.model.Element
 import models._
 
 class ABasinScraper extends BaseScraper(ArapahoeBasin)  {
-    val conditionsLabels = browser.get("http://www.arapahoebasin.com") >> elementList(".ab-condition_sub")
+    val conditionsLabels = browser.get(ArapahoeBasin.scrapeUrl) >> elementList(".ab-condition_sub")
 
     protected override def scrape24HrSnowFall(): Int = {
         val dailySnowLabel = conditionsLabels.filter(el => el.text == "Past 24 Hrs")(0)

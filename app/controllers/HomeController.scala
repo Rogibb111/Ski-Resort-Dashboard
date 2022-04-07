@@ -12,6 +12,7 @@ import scala.concurrent._
 import ExecutionContext.Implicits.global 
 import scrapers.ScraperFactory
 import play.api.libs.ws.WSClient
+import scrapers.PowdrScraper
 
 
 /**
@@ -43,12 +44,13 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents, v
   def scrape() = Action.async { implicit request: Request[AnyContent] => 
     var resortDataMap: Map[Resorts, DatabaseSnapshot] = Map[Resorts, DatabaseSnapshot]()
     var resortFutureSeq: ArrayBuffer[Future[Unit]] = ArrayBuffer.empty
-    
     resortFutureSeq.addOne(generateFuture(resortDataMap, ArapahoeBasin))
     resortFutureSeq.addOne(generateFuture(resortDataMap, Breckenridge))
     resortFutureSeq.addOne(generateFuture(resortDataMap, BeaverCreek))
     resortFutureSeq.addOne(generateFuture(resortDataMap, Vail))
     resortFutureSeq.addOne(generateFuture(resortDataMap, Keystone))
+    resortFutureSeq.addOne(generateFuture(resortDataMap, Eldora))
+    resortFutureSeq.addOne(generateFuture(resortDataMap, Copper))
     Future.sequence(resortFutureSeq).map(futureArray => {
       resortData.setSnapshotForResort(resortDataMap.toMap)
       Ok
