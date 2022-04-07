@@ -37,7 +37,8 @@ class ResortData @Inject() (protected val dbConfigProvider: DatabaseConfigProvid
             columnCheckandAdd(BeaverCreek),
             columnCheckandAdd(Vail),
             columnCheckandAdd(Keystone),
-            columnCheckandAdd(Eldora)
+            columnCheckandAdd(Eldora),
+            columnCheckandAdd(Copper)
         )
 
         db.run(setup).onComplete({
@@ -49,7 +50,7 @@ class ResortData @Inject() (protected val dbConfigProvider: DatabaseConfigProvid
         def getLatestSnapshotForAllResorts: (Future[Array[(Any, String)]]) = {
             val q = resortData.sortBy(_.created.desc).take(1)
             val tableNames = resortData.baseTableRow.create_*.map(_.name).toArray
-            var rowValuesFuture: Future[(String, String, String, String, String, String, Timestamp)] = db.run(q.result).map(_.last)
+            var rowValuesFuture: Future[(String, String, String, String, String, String, String, Timestamp)] = db.run(q.result).map(_.last)
             rowValuesFuture.map(rv => rv.productIterator.toArray.dropRight(1).zip(tableNames))
         }
 
@@ -67,6 +68,7 @@ class ResortData @Inject() (protected val dbConfigProvider: DatabaseConfigProvid
                  getResortSnapshot(Vail, databaseSnapshots).toJson(),
                  getResortSnapshot(Keystone, databaseSnapshots).toJson(),
                  getResortSnapshot(Eldora, databaseSnapshots).toJson(),
+                 getResortSnapshot(Copper, databaseSnapshots).toJson(),
                  new java.sql.Timestamp(new Date().getTime()))
             )
             db.run(insertAction).onComplete({
@@ -84,15 +86,16 @@ class ResortData @Inject() (protected val dbConfigProvider: DatabaseConfigProvid
             return snapshotOption.get
         }
 
-        private class ResortDataSchema(tag: Tag) extends Table[(String, String, String, String, String, String, Timestamp)](tag, "RESORT_DATA") {
+        private class ResortDataSchema(tag: Tag) extends Table[(String, String, String, String, String, String, String, Timestamp)](tag, "RESORT_DATA") {
             def arapahoeBasin = column[String](ArapahoeBasin.databaseName)
             def breckenridge = column[String](Breckenridge.databaseName)
             def beaverCreek = column[String](BeaverCreek.databaseName)
             def vail = column[String](Vail.databaseName)
             def keystone = column[String](Keystone.databaseName)
             def eldora = column[String](Eldora.databaseName)
+            def copper = column[String](Copper.databaseName)
             def created = column[Timestamp]("CREATED")
-            def * : ProvenShape[(String, String, String, String, String, String, Timestamp)] = 
-                (arapahoeBasin, breckenridge, beaverCreek, vail, keystone, eldora, created)
+            def * : ProvenShape[(String, String, String, String, String, String, String, Timestamp)] = 
+                (arapahoeBasin, breckenridge, beaverCreek, vail, keystone, eldora, copper, created)
         }
     }

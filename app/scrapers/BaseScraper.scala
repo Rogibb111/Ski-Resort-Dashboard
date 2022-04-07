@@ -25,6 +25,7 @@ object ScraperFactory {
       case Vail => new EpicScraper(ws, Vail)
       case Keystone => new EpicScraper(ws, Keystone)
       case Eldora => new PowdrScraper(ws, Eldora)
+      case Copper => new PowdrScraper(ws, Copper)
     }
   }
 }
