@@ -9,13 +9,12 @@ import scala.concurrent.duration._
 import models.Resorts
 
 
-case class SnowMeasurement (Inches: String, Centimeters: String)
-case class SnowResult (Depth: SnowMeasurement, Description: String)
-
-
 class EpicScraper (ws: WSClient, resort: Resorts)(
     implicit ec: ExecutionContext
 ) extends BaseScraper(resort)  {
+    case class SnowMeasurement (Inches: String, Centimeters: String)
+    case class SnowResult (Depth: SnowMeasurement, Description: String)
+
     implicit val SnowMeasurementReads = Json.reads[SnowMeasurement]
     implicit val SnowResultReads = Json.reads[SnowResult]
 
