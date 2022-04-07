@@ -44,12 +44,12 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents, v
   def scrape() = Action.async { implicit request: Request[AnyContent] => 
     var resortDataMap: Map[Resorts, DatabaseSnapshot] = Map[Resorts, DatabaseSnapshot]()
     var resortFutureSeq: ArrayBuffer[Future[Unit]] = ArrayBuffer.empty
-    new PowdrScraper(ws)
     resortFutureSeq.addOne(generateFuture(resortDataMap, ArapahoeBasin))
     resortFutureSeq.addOne(generateFuture(resortDataMap, Breckenridge))
     resortFutureSeq.addOne(generateFuture(resortDataMap, BeaverCreek))
     resortFutureSeq.addOne(generateFuture(resortDataMap, Vail))
     resortFutureSeq.addOne(generateFuture(resortDataMap, Keystone))
+    resortFutureSeq.addOne(generateFuture(resortDataMap, Eldora))
     Future.sequence(resortFutureSeq).map(futureArray => {
       resortData.setSnapshotForResort(resortDataMap.toMap)
       Ok

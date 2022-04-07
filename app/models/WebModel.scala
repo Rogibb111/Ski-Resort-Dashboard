@@ -56,6 +56,7 @@ object ResortsFactory {
             case BeaverCreek.databaseName => BeaverCreek
             case Vail.databaseName => Vail
             case Keystone.databaseName => Keystone
+            case Eldora.databaseName => Eldora
             case default => throw new Error("Tried to read string that wasn't a Resort")
         }
     }
@@ -66,11 +67,13 @@ object ResortsFactory {
             case resort if resort == BeaverCreek.toString() => BeaverCreek
             case resort if resort == Vail.toString() => Vail
             case resort if resort == Keystone.toString() => Keystone
+            case resort if resort == Eldora.toString() => Eldora
             case default => throw new Error("Tried to read string that wasn't a Resort")
         }
     }
 }
 sealed trait Resorts { val databaseName: String; val scrapeUrl: String }
+sealed trait PowdrResorts extends Resorts { val location_id: Int }
 case object ArapahoeBasin extends Resorts {
     override def toString: String = "Arapahoe-Basin"
     override val databaseName = "ARAPAHOE_BASIN"
@@ -97,4 +100,14 @@ case object Keystone extends Resorts {
     override def toString: String = "Keystone-Resort"
     override val databaseName: String = "KEYSTONE"
     override val scrapeUrl: String = "https://www.keystoneresort.com/api/PageApi/GetWeatherDataForHeader"   
+}
+
+case object Eldora extends PowdrResorts {
+    override def toString: String = "Eldora-Mountain-Resort"
+    override val databaseName: String = "ELDORA"
+    
+    override val scrapeUrl: String = "https://www.eldora.com/api/v1/dor/conditions"
+    
+    override val location_id: Int = 11
+    
 }
