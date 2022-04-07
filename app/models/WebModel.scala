@@ -70,30 +70,30 @@ object ResortsFactory {
         }
     }
 }
-sealed trait Resorts { val databaseName: String }
-sealed trait EpicResorts extends Resorts { val scrapeUrl: String }
+sealed trait Resorts { val databaseName: String; val scrapeUrl: String }
 case object ArapahoeBasin extends Resorts {
     override def toString: String = "Arapahoe-Basin"
     override val databaseName = "ARAPAHOE_BASIN"
+    override val scrapeUrl: String = "http://www.arapahoebasin.com"
 }
-case object Breckenridge extends EpicResorts {
+case object Breckenridge extends Resorts {
     override def toString: String = "Breckenridge"
     override val databaseName: String = "BRECKENRIDGE"
     override val scrapeUrl: String = "https://www.breckenridge.com/api/PageApi/GetWeatherDataForHeader"
 }
-case object BeaverCreek extends EpicResorts {
+case object BeaverCreek extends Resorts {
     override def toString: String = "Beaver-Creek"
     override val databaseName: String = "BEAVERCREEK"
     override val scrapeUrl: String = "https://www.beavercreek.com/api/PageApi/GetWeatherDataForHeader"
 }
 
-case object Vail extends EpicResorts {
+case object Vail extends Resorts {
     override def toString: String = "Vail"
     override val databaseName: String = "VAIL"
     override val scrapeUrl: String = "https://www.vail.com/api/PageApi/GetWeatherDataForHeader"
 }
 
-case object Keystone extends EpicResorts {
+case object Keystone extends Resorts {
     override def toString: String = "Keystone-Resort"
     override val databaseName: String = "KEYSTONE"
     override val scrapeUrl: String = "https://www.keystoneresort.com/api/PageApi/GetWeatherDataForHeader"   

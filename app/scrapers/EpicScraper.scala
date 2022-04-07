@@ -1,23 +1,19 @@
 package scrapers
 
-import models.Breckenridge
 import javax.inject.Inject
 import play.api.libs.ws._
-import scala.concurrent.ExecutionContext
-import scala.concurrent.Future
-import scala.util.Success
-import scala.util.Failure
+import scala.concurrent.{ ExecutionContext, Future, Await }
+import scala.util.{ Success, Failure }
 import play.api.libs.json._
-import scala.concurrent.Await
 import scala.concurrent.duration._
-import models.EpicResorts
+import models.Resorts
 
 
 case class SnowMeasurement (Inches: String, Centimeters: String)
 case class SnowResult (Depth: SnowMeasurement, Description: String)
 
 
-class EpicScraper (ws: WSClient, resort: EpicResorts)(
+class EpicScraper (ws: WSClient, resort: Resorts)(
     implicit ec: ExecutionContext
 ) extends BaseScraper(resort)  {
   implicit val SnowMeasurementReads = Json.reads[SnowMeasurement]
