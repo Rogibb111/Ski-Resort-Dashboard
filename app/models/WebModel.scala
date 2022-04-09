@@ -58,6 +58,7 @@ object ResortsFactory {
             case Keystone.databaseName => Keystone
             case Eldora.databaseName => Eldora
             case Copper.databaseName => Copper
+            case WinterPark.databaseName => WinterPark
             case default => throw new Error("Tried to read string that wasn't a Resort")
         }
     }
@@ -70,6 +71,7 @@ object ResortsFactory {
             case resort if resort == Keystone.toString() => Keystone
             case resort if resort == Eldora.toString() => Eldora
             case resort if resort == Copper.toString() => Copper
+            case resport if resort == WinterPark.toString() => WinterPark
             case default => throw new Error("Tried to read string that wasn't a Resort")
         }
     }
@@ -116,4 +118,10 @@ case object Copper extends PowdrResorts {
     override val databaseName: String = "COPPER"
     override val scrapeUrl: String = "https://www.coppercolorado.com/api/v1/dor/conditions"
     override val location_id: Int = 7
+}
+
+case object WinterPark extends Resorts {
+    override def toString: String = "Winter-Park"
+    override val databaseName: String = "WINTERPARK"
+    override val scrapeUrl: String = "https://mtnpowder.com/feed?resortId=5"
 }

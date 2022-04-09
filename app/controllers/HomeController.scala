@@ -45,7 +45,7 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents, v
   def scrape() = Action.async { implicit request: Request[AnyContent] => 
     var resortDataMap: Map[Resorts, DatabaseSnapshot] = Map[Resorts, DatabaseSnapshot]()
     var resortFutureSeq: ArrayBuffer[Future[Unit]] = ArrayBuffer.empty
-    new WinterParkScraper(ws)
+
     resortFutureSeq.addOne(generateFuture(resortDataMap, ArapahoeBasin))
     resortFutureSeq.addOne(generateFuture(resortDataMap, Breckenridge))
     resortFutureSeq.addOne(generateFuture(resortDataMap, BeaverCreek))
@@ -53,6 +53,8 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents, v
     resortFutureSeq.addOne(generateFuture(resortDataMap, Keystone))
     resortFutureSeq.addOne(generateFuture(resortDataMap, Eldora))
     resortFutureSeq.addOne(generateFuture(resortDataMap, Copper))
+    resortFutureSeq.addOne(generateFuture(resortDataMap, WinterPark))
+    
     Future.sequence(resortFutureSeq).map(futureArray => {
       resortData.setSnapshotForResort(resortDataMap.toMap)
       Ok
