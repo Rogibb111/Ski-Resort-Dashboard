@@ -14,6 +14,7 @@ class EpicScraper (ws: WSClient, resort: Resorts)(
 ) extends BaseScraper(resort)  {
     case class SnowMeasurement (Inches: String, Centimeters: String)
     case class SnowResult (Depth: SnowMeasurement, Description: String)
+    private val default = SnowResult(SnowMeasurement("0", ""), "")
 
     implicit val SnowMeasurementReads = Json.reads[SnowMeasurement]
     implicit val SnowResultReads = Json.reads[SnowResult]
@@ -21,16 +22,14 @@ class EpicScraper (ws: WSClient, resort: Resorts)(
     private val request = ws.url(resort.scrapeUrl)
     private val snowReportResult: Set[SnowResult] = Await.result(request.get().map { response =>
         (response.json \ "SnowReportSections").validate[Set[SnowResult]]
-    }, 5.second).get
-
-    // val snowReport = request.get().toCompletableFuture().get().asJson.get("SnowReportSections").asInstanceOf[ArrayNode];
+    }, 5.second).getOrElse(Set(default))
 
     protected def scrape24HrSnowFall(): Int = {
-        return snowReportResult.find(reportItem => reportItem.Description.contains("24 Hour")).get.Depth.Inches.toInt;
+        return snowReportResult.find(reportItem => reportItem.Description.contains("24 Hour")).getOrElse(default).Depth.Inches.toInt;
     }
     
     protected def scrapeBaseDepth(): Int = {
-        return snowReportResult.find(reportItem => reportItem.Description.contains("Base")).get.Depth.Inches.toInt;
+        return snowReportResult.find(reportItem => reportItem.Description.contains("Base")).getOrElse(default).Depth.Inches.toInt;
     }
   
 }
