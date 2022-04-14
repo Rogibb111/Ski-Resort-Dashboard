@@ -39,7 +39,7 @@ abstract class BaseScraper(resort: Resorts) {
 
   protected val browser = JsoupBrowser()
   private val liveWeather = browser
-    .get("https://www.snow-forecast.com/resorts/"+resort.toString()+"/") >> elementList(".live-snow__table123 tbody .live-snow__table-row")
+    .get("https://www.snow-forecast.com/resorts/"+resort.toString()+"/") >> elementList(".live-snow__table tbody .live-snow__table-row")
   private val tcellMidLift = liveWeather.find(el => 
     (el >> element(".live-snow__table-row .live-snow__table-cell--elevation")).text == "Middle Lift:").getOrElse(elementDefault)
 
