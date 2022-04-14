@@ -34,26 +34,35 @@ object ScraperFactory {
 abstract class BaseScraper(resort: Resorts) {
   protected def scrape24HrSnowFall(): Int
   protected def scrapeBaseDepth(): Int
+  private val jsoupElementDefault = new org.jsoup.nodes.Element("default")
+  private val elementDefault = JsoupBrowser.JsoupElement(jsoupElementDefault)
 
   protected val browser = JsoupBrowser()
   private val liveWeather = browser
     .get("https://www.snow-forecast.com/resorts/"+resort.toString()+"/") >> elementList(".live-snow__table tbody .live-snow__table-row")
   private val tcellMidLift = liveWeather.find(el => 
-    (el >> element(".live-snow__table-row .live-snow__table-cell--elevation")).text == "Middle Lift:").get
+    (el >> element(".live-snow__table-row .live-snow__table-cell--elevation")).text == "Middle Lift:").getOrElse(elementDefault)
 
   protected def scrapeTemperature(): Int = {
-    return (tcellMidLift >> element(".temp")).text.toInt
+    return (tcellMidLift >?> element(".temp")).getOrElse(elementDefault).text.toIntOption.getOrElse(0)
   }
 
   protected def scrapeWindSpeed(): Int = {
-    return (tcellMidLift >> element(".wind-icon__val")).text.toInt
+    return (tcellMidLift >?> element(".wind-icon__val")).getOrElse(elementDefault).text.toIntOption.getOrElse(0)
   }
 
   protected def scrapeCardinalDirection(): CardinalDirections = {
-    val transform = (tcellMidLift >> element(".wind-icon__arrow")).attr("transform")
-    val degreeExtractor = "[a-z]+\\((\\d+)\\)".r
-    val degreeExtractor(degreeStr) = transform
-    return CardinalDirectionsMapper.fromDegree(degreeStr.toInt).get
+    val windArrow = (tcellMidLift >?> element(".wind-icon__arrow")).getOrElse(elementDefault)
+    windArrow.hasAttr("transform") match {
+      case true => {
+        val transform = windArrow.attr("transform")
+        val degreeExtractor = "[a-z]+\\((\\d+)\\)".r
+        val degreeExtractor(degreeStr: String) = transform
+        CardinalDirectionsMapper.fromDegree(degreeStr.toInt).get
+      }
+      case false => North
+    }
+
   }
 
   def scrapeResort(): DatabaseSnapshot = {
