@@ -45,10 +45,10 @@ jobs:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
       - name: Print Results
         if: steps.semantic.outputs.new_release_published == 'true'
-          run: |
-            echo ${{ steps.semantic.outputs.new_release_version }}
-            echo ${{ steps.semantic.outputs.new_release_major_version }}
-            echo ${{ steps.semantic.outputs.new_release_minor_version }}
-            echo ${{ steps.semantic.outputs.new_release_patch_version }}
+        run: |
+          echo ${{ steps.semantic.outputs.new_release_version }}
+          echo ${{ steps.semantic.outputs.new_release_major_version }}
+          echo ${{ steps.semantic.outputs.new_release_minor_version }}
+          echo ${{ steps.semantic.outputs.new_release_patch_version }}
 
   
