@@ -30,7 +30,8 @@ jobs:
             [
               '+([0-9])?(.{+([0-9]),x}).x',
               'main', 
-              'next', 
+              'next',
+              'release-test',
               'next-major', 
               {
                 name: 'beta', 
@@ -45,7 +46,7 @@ jobs:
             @semantic-release/changelog@6.0.1
             @semantic-release/git@10.0.1
         env:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
       - name: Print Results
         if: steps.semantic.outputs.new_release_published == 'true'
         run: |
