@@ -10,10 +10,14 @@ on:
       - next-major
       - alpha
       - beta
+      - release-test
       
 jobs:
   release:
     runs-on: ubuntu-latest
+    environment: 
+      name: release-pipeline
+      url: https://ski-resort-dashboard.herokuapp.com/
     steps:
       - name: Checkout
         uses: actions/checkout@v3
