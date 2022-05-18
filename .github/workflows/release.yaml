@@ -10,7 +10,6 @@ on:
       - next-major
       - alpha
       - beta
-      - release-test
       
 jobs:
   release:
@@ -31,7 +30,6 @@ jobs:
               '+([0-9])?(.{+([0-9]),x}).x',
               'main', 
               'next',
-              'release-test',
               'next-major', 
               {
                 name: 'beta', 
