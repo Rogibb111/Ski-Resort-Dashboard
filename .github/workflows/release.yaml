@@ -25,6 +25,7 @@ jobs:
           token: ${{ secrets.RELEASE_TOKEN }}
 
       - name: Semantic Release
+        id: semantic-release
         uses: cycjimmy/semantic-release-action@v3
         with:
           semantic_version: 19.0.2
@@ -33,7 +34,7 @@ jobs:
               '+([0-9])?(.{+([0-9]),x}).x',
               'main', 
               'next',
-              'next-major', 
+              'next-major',
               {
                 name: 'beta', 
                 prerelease: true
@@ -49,11 +50,18 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
       - name: Print Results
-        if: steps.semantic.outputs.new_release_published == 'true'
+        if: steps.semantic-release.outputs.new_release_published == 'true'
         run: |
-          echo ${{ steps.semantic.outputs.new_release_version }}
-          echo ${{ steps.semantic.outputs.new_release_major_version }}
-          echo ${{ steps.semantic.outputs.new_release_minor_version }}
-          echo ${{ steps.semantic.outputs.new_release_patch_version }}
+          echo ${{ steps.semantic-release.outputs.new_release_version }}
+          echo ${{ steps.semantic-release.outputs.new_release_major_version }}
+          echo ${{ steps.semantic-release.outputs.new_release_minor_version }}
+          echo ${{ steps.semantic-release.outputs.new_release_patch_version }}
+      - name: Deploy To Heroku #Dummy Commit To Trigger Release
+        if: steps.semantic-release.outputs.new_release_published == 'true'
+        uses: akhileshns/heroku-deploy@v3.12.12 # This is the action
+        with:
+          heroku_api_key: ${{secrets.HEROKU_API_KEY}}
+          heroku_app_name: "ski-resort-dashboard" #Must be unique in Heroku
+          heroku_email: "gibsta269@gmail.com"
 
   
