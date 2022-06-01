@@ -5,10 +5,11 @@ organization := "com.example"
 
 version := "1.0-SNAPSHOT"
 
-lazy val ts = (project in file(".")).enablePlugins(SbtWeb).settings(
+lazy val root = (project in file(".")).enablePlugins(PlayScala).aggregate(ts)
+lazy val ts = (project in file("front-end")).enablePlugins(SbtWeb).settings(
     logLevel := Level.Debug,
-    Compile / unmanagedSourceDirectories += baseDirectory.value /"front-end" /"typescript" ,
-    Assets / sourceDirectory := baseDirectory.value /"front-end" /"typescript",
+    Compile / unmanagedSourceDirectories += baseDirectory.value /"typescript" ,
+    Assets / sourceDirectory := baseDirectory.value /"typescript",
     Assets / includeFilter := GlobFilter("*.ts") | GlobFilter("*.js") 
 )
 
